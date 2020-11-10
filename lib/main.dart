@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 // Import the firebase_core plugin
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_recipe/recipes.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(App());
 }
 
@@ -37,6 +39,8 @@ class App extends StatelessWidget {
 class RecipeApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return MaterialApp(
+      home: Recipes(),
+    );
   }
 }
