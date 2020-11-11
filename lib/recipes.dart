@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_recipe/recipe_details.dart';
 
 class Recipes extends StatelessWidget {
-
-  CollectionReference recipes = FirebaseFirestore.instance.collection('Recipes');
+  CollectionReference recipes =
+      FirebaseFirestore.instance.collection('Recipes');
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +12,7 @@ class Recipes extends StatelessWidget {
       appBar: AppBar(),
       body: StreamBuilder(
           stream: recipes.snapshots(),
-          builder: (context,snapshot){
+          builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Text('Something went wrong');
             }
@@ -21,9 +22,16 @@ class Recipes extends StatelessWidget {
             }
 
             return ListView.builder(
-              itemCount:snapshot.data.documents.length,
-              itemBuilder: (context,index){
+              itemCount: snapshot.data.documents.length,
+              itemBuilder: (context, index) {
                 return ListTile(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RecipeDetails(
+                                snapshot.data.documents[index].documentID)));
+                  },
                   title: Text(snapshot.data.documents[index]['title']),
                   subtitle: Text(snapshot.data.documents[index]['desc']),
                 );
