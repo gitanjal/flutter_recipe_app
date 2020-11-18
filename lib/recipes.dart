@@ -39,6 +39,7 @@ class Recipes extends StatelessWidget {
                             builder: (context) => RecipeDetails(
                                 snapshot.data.documents[index].documentID)));
                   },
+              //    leading: (snapshot.data.documents[index]['imageUrl']!=null)?Image.network(snapshot.data.documents[index]['imageUrl']):Container(),
                   title: Text(snapshot.data.documents[index]['title']),
                   subtitle: Text(snapshot.data.documents[index]['desc']),
                 );
