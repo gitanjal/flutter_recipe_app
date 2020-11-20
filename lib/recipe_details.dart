@@ -24,6 +24,7 @@ class RecipeDetails extends StatelessWidget {
             Map<String, dynamic> data = snapshot.data.data();
             return Column(
               children: [
+                Image.network(data['imageUrl']),
                 Text(" ${data['title']}"),
                 Text(" ${data['desc']}"),
               ],
