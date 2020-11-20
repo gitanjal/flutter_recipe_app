@@ -96,7 +96,22 @@ class _AddRecipeState extends State<AddRecipe> {
                     ],
                   ),
                   ElevatedButton(
-                      onPressed: _addRecipe, child: Text('Add Recipe'))
+                      onPressed: () async {
+                        if (_keyForm.currentState.validate()) {
+                          //display a loader
+                          setState(() {
+                            _loading = true;
+                          });
+
+                          await _addRecipe();
+
+                          //hide the loader
+                          setState(() {
+                            _loading = false;
+                          });
+                        }
+                      },
+                      child: Text('Add Recipe'))
                 ],
               ),
             ),
@@ -104,49 +119,38 @@ class _AddRecipeState extends State<AddRecipe> {
   }
 
   _addRecipe() async {
+    String url = await _uploadFile(_image);
+    if (url == null) {
+      print('Failed to upload the image');
+      _keyScaffold.currentState.showSnackBar(SnackBar(
+          content: Text('Some error occurred while uploading the image')));
+    } else {
+      try {
+        final docRef = await _recipes.add({
+          'title': _controllerTitle.text,
+          'desc': _controllerDesc.text,
+          'imageUrl': url,
+        });
 
-    if (_keyForm.currentState.validate()) {
-
-      setState(() {
-        _loading = true;
-      });
-
-      String url = await _uploadFile(_image);
-      if (url == null) {
-        print('Failed to upload the image');
+        //clear the form
+        _clearForm();
         _keyScaffold.currentState.showSnackBar(SnackBar(
-            content: Text('Some error occurred while uploading the image')));
-      } else {
-        try {
-          final docRef = await _recipes.add({
-            'title': _controllerTitle.text,
-            'desc': _controllerDesc.text,
-            'imageUrl': url,
-          });
-
-          _keyScaffold.currentState.showSnackBar(SnackBar(
-            content: Text('Recipe Added'),
-            action: SnackBarAction(
-              label: 'View',
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => RecipeDetails(docRef.id)));
-              },
-            ),
-          ));
-          _keyForm.currentState.reset(); //clear the form
-        } on FirebaseException catch (e) {
-          print('Failed to add recipe: $e');
-          _keyScaffold.currentState
-              .showSnackBar(SnackBar(content: Text('Failed to add recipe')));
-        }
+          content: Text('Recipe Added'),
+          action: SnackBarAction(
+            label: 'View',
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => RecipeDetails(docRef.id)));
+            },
+          ),
+        ));
+      } on FirebaseException catch (e) {
+        print('Failed to add recipe: $e');
+        _keyScaffold.currentState
+            .showSnackBar(SnackBar(content: Text('Failed to add recipe')));
       }
-
-      setState(() {
-        _loading = false;
-      });
     }
   }
 
@@ -162,5 +166,12 @@ class _AddRecipeState extends State<AddRecipe> {
       } on FirebaseException catch (e) {}
     }
     return url;
+  }
+
+  _clearForm() {
+    _controllerTitle.clear();
+    _controllerDesc.clear();
+    _image=null;
+
   }
 }
