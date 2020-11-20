@@ -60,8 +60,6 @@ class _AddRecipeState extends State<AddRecipe> {
                             _loading = false;
                           });
 
-                          //clear the form
-                          _clearForm();
                         }
                       },
                       child: Text('Add Recipe'))
@@ -77,6 +75,9 @@ class _AddRecipeState extends State<AddRecipe> {
         'title': _controllerTitle.text,
         'desc': _controllerDesc.text,
       });
+
+      //clear the form
+      _clearForm();
 
       _keyScaffold.currentState.showSnackBar(SnackBar(
         content: Text('Recipe Added'),
